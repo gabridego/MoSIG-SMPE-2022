@@ -25,8 +25,7 @@ is a good programming language for data loading and processing.
 ## R and *dplyr*
 
 - *dplyr* is a library for data manipulation.
-- `%>%` represents a pipe (check [lecture3_dplyr.pdf](./lecture3_dplyr.pdf) for usage
-examples).
+- `%>%` represents a pipe (check [lecture3_dplyr](https://gabridego.github.io/MoSIG-SMPE-2022/notes/lecture3_dplyr.html) for usage examples).
 - In *dplyr*, keywords are standard database actions, like `filter` and `select`. Advanced
 instructions, like `ungroup` are available.
 

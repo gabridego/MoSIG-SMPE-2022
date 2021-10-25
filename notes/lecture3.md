@@ -19,13 +19,13 @@ talk.
 - When reading data, one must check data types. CSV is a light format but lacks this
 information, JSON and YAML solve this issues.
 - Values must be interpreted and checked, semantics matters.
-- Always aim at transforming data in the best way for the goal. [cell](http://cell-lang.net/)
+- Always aim at transforming data in the best way for the goal. [Cell](http://cell-lang.net/)
 is a good programming language for data loading and processing.
 
 ## R and *dplyr*
 
 - *dplyr* is a library for data manipulation.
-- `%>%` represents a pipe (check [lecture3_dplyr](https://gabridego.github.io/MoSIG-SMPE-2022/notes/lecture3_dplyr.html) for usage examples).
+- `%>%` represents a pipe (check [lecture3_dplyr](./lecture3_dplyr.html) for usage examples).
 - In *dplyr*, keywords are standard database actions, like `filter` and `select`. Advanced
 instructions, like `ungroup` are available.
 

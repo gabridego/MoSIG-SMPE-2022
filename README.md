@@ -7,7 +7,13 @@ for the year 2021/22.
 
 - [Data visualization](homeworks/dataviz.ipynb) (kindergarten and foot length/dictation mistakes)
 - [Challenger](homeworks/challenger.ipynb)
-- [First name/last name analysis](homeworks/)
+- First name analysis: [source](homeworks/firstnames.Rmd)/[PDF](homeworks/firstnames.pdf)
+
+## Notes
+
+- Lecture 1 - 30/09/2021
+- Lecture 2 - 14/10/2021
+- [Lecture 3](notes/lecture3.md) - 21/10/2021
 
 ## Author
 

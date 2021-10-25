@@ -1,0 +1,177 @@
+---
+title: "French given names per year per department"
+author: "Gabriele Degola, Lucas Mello Schnorr, Jean-Marc Vincent"
+date: "October, 2021"
+output:
+  pdf_document:
+    includes:
+      in_header: "../utils/wrap-code.tex"
+  html_document:
+    df_print: paged
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r, message=FALSE, warning=FALSE}
+# The environment
+library(tidyverse)
+library(ggplot2)
+
+version
+```
+The aim of the activity is to develop a methodology to answer a specific question on a given dataset. 
+
+The dataset is the set of Firstname given in France on a large period of time. 
+[given names data set of INSEE](https://www.insee.fr/fr/statistiques/fichier/2540004), we choose this dataset because it is sufficiently large, you can't do the analysis by hand, the structure is simple
+
+
+You need to use the _tidyverse_ for this analysis. Unzip the file _dpt2020_txt.zip_ (to get the **dpt2020.csv**). Read in R with this code. Note that you might need to install the `readr` package with the appropriate command.
+
+## Download Raw Data from the website
+```{r, warning=FALSE}
+file = "data/dpt2020_txt.zip"
+if(!file.exists(file)){
+  download.file("https://www.insee.fr/fr/statistiques/fichier/2540004/dpt2020_csv.zip",
+	destfile=file)
+}
+unzip(file)
+```
+
+## Build the Dataframe from file
+```{r}
+FirstNames <- read_delim("data/dpt2020.csv",delim =";")
+```
+```{r}
+FirstNames
+```
+Translation in english of variables names:
+
+- sexe -> gender 
+- preusuel (prénom usuel) -> Firstname
+- annais (année de naissance) -> Birth year
+- dpt (département) -> department (administrative area unit)
+- nombre -> number
+
+All of these following questions may need a preliminary analysis of the data, feel free to present answers and justifications in your own order and structure your report as it should be for a scientific report.
+
+1. Choose a firstname and analyse its frequency along time. Compare several firstnames frequency
+2. Establish, by gender, the most given firstname by year. 
+3. Make a short synthesis
+4. Advanced (not mandatory) : is the firstname correlated with the localization (department) ? What could be a method to analyze such a correlation.
+
+The report should be a pdf knitted from a  notebook (around  3 pages including figures), the notebook and the report should be delivered.
+
+## Data exploration
+
+Before answering our questions, a preliminary analysis of the data is required. During data loading, some failures reading the *annais* variable are prompted.
+
+```{r}
+unique(FirstNames$annais)
+```
+
+The dataset contains information about the given names from `r unique(FirstNames$annais)[1]` to `r unique(FirstNames$annais)[length(unique(FirstNames$annais)) - 1]`. However, the year information is not available for some entries.
+
+```{r}
+FirstNames %>% summarise(across(everything(), ~ sum(is.na(.))))
+```
+
+That confirms that the *annais* value is not available for some entries, while in just one entry the *preusuel* is not available. As we are interested in the relation between names usage and time, these entries are dropped.
+
+```{r}
+FirstNames <- FirstNames %>% drop_na()
+```
+
+We can proceed exploring the other variables. We can start by checking the *sexe* information.
+
+```{r}
+unique(FirstNames$sexe)
+```
+
+The dataset is therefore relative to two genders, probably male and female. Let's print some names for the two genders.
+
+```{r}
+print(nrow(FirstNames[FirstNames$sexe == 1,]))
+head(FirstNames[FirstNames$sexe == 1,] %>% group_by(preusuel) %>% summarise(num = n(), tot = sum(nombre)) %>% arrange(desc(tot)))
+```
+```{r}
+nrow(FirstNames[FirstNames$sexe == 2,])
+head(FirstNames[FirstNames$sexe == 2,] %>% group_by(preusuel) %>% summarise(num = n(), tot = sum(nombre)) %>% arrange(desc(tot)))
+```
+
+So the entries of *sexe* 1 contain male names (like Jean, Pierre and Philippe), while *sexe* 2 is relative to female names (Marie, Jeanne, Catherine). A considerable amount of entries are relative to general rare names (`_PRENOMS_RARES`). Most of the entries of the dataset are relative to female names. In total, `r length(unique(FirstNames$preusuel))` names appear in the dataset, of which `r length(unique(FirstNames[FirstNames$sexe == 1,]$preusuel))` are male names and `r length(unique(FirstNames[FirstNames$sexe == 2,]$preusuel))` are female names. There is therefore some overlapping (names that are used for both males and females). 
+
+Now, we can analyse the firstnames appearing in the dataset.
+
+## Firstnames frequencies over time
+
+In this section, we are interested in studying the frequency of some French firstnames over the years.
+
+As a start, the trend of the overall most used names (Jean for males, Marie for females) is analysed.
+
+```{r echo=FALSE, results=FALSE, message=FALSE, fig.height = 4, fig.align = "center"}
+jean <- FirstNames[FirstNames$preusuel == 'JEAN' & FirstNames$sexe == 1,]
+jean <- jean %>% group_by(annais) %>% summarise(tot = sum(nombre))
+# plot(jean)
+ggplot(jean, aes(x=annais, y=tot)) + geom_line() + geom_point(size=1) + ggtitle("Male newborns of name Jean over the years") + xlab("Year") + ylab("Number of newborns")
+```
+```{r echo=FALSE, results=FALSE, message=FALSE, fig.height = 4, fig.align = "center"}
+marie <- FirstNames[FirstNames$preusuel == 'MARIE' & FirstNames$sexe == 2,]
+marie <- marie %>% group_by(annais) %>% summarise(tot = sum(nombre))
+# plot(marie)
+ggplot(marie, aes(x=annais, y=tot)) + geom_line() + geom_point(size=1) + ggtitle("Female newborns of name Marie over the years") + xlab("Year") + ylab("Number of newborns")
+```
+
+Event though the trends for the two names are different, a few common patterns can be highlighted. The usage of both names constantly decreased since 1950 until today with some small fluctuations. For both names, the usage dropped around 1918 and returned normal a few years later. We can compare the trends for other names (Jean, Marie, Nicolas, Juliette, Gabriel, Elodie). The trend of rare firstnames is also plotted.
+
+```{r echo=FALSE, results=FALSE, message=FALSE, fig.height = 5, fig.align = "center"}
+multiple_names <- FirstNames[(FirstNames$preusuel == 'JEAN' & FirstNames$sexe == 1) |
+                              (FirstNames$preusuel == 'MARIE' & FirstNames$sexe == 2) |
+                              (FirstNames$preusuel == 'NICOLAS' & FirstNames$sexe == 1) |
+                              (FirstNames$preusuel == 'JULIETTE' & FirstNames$sexe == 2) |
+                              (FirstNames$preusuel == 'GABRIEL' & FirstNames$sexe == 1) |
+                              (FirstNames$preusuel == 'ELODIE' & FirstNames$sexe == 2) |
+                              FirstNames$preusuel == '_PRENOMS_RARES',]
+multiple_names <- multiple_names %>% mutate_at(c("preusuel"), ~ ifelse(preusuel == '_PRENOMS_RARES' & sexe == 1, '_PRENOMS_RARES_MASC', .))
+multiple_names <- multiple_names %>% mutate_at(c("preusuel"), ~ ifelse(preusuel == '_PRENOMS_RARES' & sexe == 2, '_PRENOMS_RARES_FEM', .))
+multiple_names <- multiple_names %>% group_by(preusuel, annais) %>% summarise(tot = sum(nombre))
+ggplot(multiple_names, aes(x=annais, y=tot, group=preusuel, color=preusuel)) + geom_line() + geom_point(size=1) + ggtitle("Name of newborns over the years") + xlab("Year") + ylab("Number of newborns") + theme(legend.position = "top")
+```
+
+While Jean and Marie had been the most frequent name for a long time, in the last decades they have given way to other names with various trends. Recently, the so-called rare names have taken the lead for both males and females, even though several names are included in the category.
+
+
+## Most given firstname per year
+
+```{r echo=FALSE, results=FALSE, message=FALSE, fig.height = 4, fig.align = "center"}
+names_per_year <- FirstNames %>% group_by(preusuel, annais, sexe) %>% summarise(tot = sum(nombre))
+names_per_year <- names_per_year %>% group_by(annais, sexe) %>% top_n(n = 1)
+
+ggplot(names_per_year[names_per_year$sexe == 1,], aes(x=annais, y=tot, color=preusuel)) + geom_line() + geom_point(size=1) + ggtitle("Most frequent male name over the years") + xlab("Year") + ylab("Number of newborns") + theme(legend.position = "top")
+
+ggplot(names_per_year[names_per_year$sexe == 2,], aes(x=annais, y=tot, color=preusuel)) + geom_line() + geom_point(size=1) + ggtitle("Most frequent female name over the years") + xlab("Year") + ylab("Number of newborns") + theme(legend.position = "top")
+```
+
+From the two graphs, one can think that, while at the beginning of XX century only a few names were used, in the last decades a moltitude of names are instead present. The total number of newborns per year can also be plotted.
+
+```{r echo=FALSE, results=FALSE, message=FALSE, fig.height = 4, fig.align = "center"}
+born_per_year <- FirstNames %>% group_by(annais, sexe) %>% summarise(tot = sum(nombre))
+born_per_year <- transform(born_per_year, sexe=as.character(sexe))
+ggplot(born_per_year, aes(x=annais, y=tot, group=sexe, color=sexe)) + geom_line() + geom_point(size=1) + ggtitle("Number of newborns per year") + xlab("Year") + ylab("Number of newborns") + theme(legend.position = "top")
+```
+
+From the last graph, the drop mentionned before are more evident and involve all newborns. Another small drop can be highlighted around 1940. They are probably due to the two world wars. Lately, the number of newborns constantly decreases while the frequency of rare firstnames does increase.
+
+## Correlation between firstnames and departments
+
+As did before, one can visualize the most common name in each French department.
+
+```{r echo=FALSE, results=FALSE, message=FALSE, fig.height = 4, fig.align = "center"}
+names_per_dpt <- FirstNames %>% group_by(preusuel, dpt, sexe) %>% summarise(tot = sum(nombre))
+names_per_dpt <- names_per_dpt %>% group_by(dpt, sexe) %>% top_n(n = 1)
+
+ggplot(names_per_dpt[names_per_dpt$sexe == 1,], aes(x=dpt, y=tot, color=preusuel)) + scale_x_discrete(guide = guide_axis(n.dodge=3), ) + geom_point(size=1) + ggtitle("Most frequent male name per department") + xlab("Department") + ylab("Number of newborns") + theme(legend.position = "top")
+
+ggplot(names_per_dpt[names_per_dpt$sexe == 2,], aes(x=dpt, y=tot, color=preusuel)) + scale_x_discrete(guide = guide_axis(n.dodge=3), ) + geom_point(size=1) + ggtitle("Most frequent female name per department") + xlab("Department") + ylab("Number of newborns") + theme(legend.position = "top")
+```

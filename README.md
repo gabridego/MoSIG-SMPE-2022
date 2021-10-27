@@ -8,7 +8,7 @@ for the year 2021/22.
 - [Data visualization](homeworks/dataviz.ipynb) (kindergarten and foot length/dictation mistakes)
 - [Challenger](homeworks/challenger.ipynb)
 - First name analysis: [source](homeworks/firstnames.Rmd)/[PDF](homeworks/firstnames.pdf)
-- [R manipulation](homeworks/r_manipulation.html) of data from PDF
+- [R manipulation](homeworks/r_manipulation.pdf) of data from PDF
 
 ## Notes
 

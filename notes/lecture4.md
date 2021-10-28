@@ -16,7 +16,7 @@ Any process of those data must be declared to authorities.
 Written document that describes how data are acquired, generated or used during a research process
 and the mechanisms used during and after the project. FAIR, as open as possible and as closed as necessary.
 
-*Why data managament plan?*
+**Why data managament plan?**
 
 - Time efficiency: without DMP, difficult to make research reproducible later; with DMP spend some time at
 the beginning and then it is faster.
@@ -25,7 +25,7 @@ the beginning and then it is faster.
 
 DMP needs to be updated over time.
 
-*Relevant aspects of data management:* related to FAIR principle. DMP can be written by hand or using tools.
+**Relevant aspects of data management:** related to FAIR principle. DMP can be written by hand or using tools.
 
 - Data description and collection or re-use of existing data:
 	- describe sources and licences and the new data collected or produced (why not using existing data?)

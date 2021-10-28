@@ -15,7 +15,7 @@ for the year 2021/22.
 - Lecture 1 - 30/09/2021
 - Lecture 2 - 14/10/2021
 - [Lecture 3](notes/lecture3.md) - 21/10/2021
-	- [Intro to R and dplyr](lecture3_dplyr.html)
+	- [Intro to R and dplyr](notes/lecture3_dplyr.html)
 - [Lecture 4](notes/lecture4.md) - 28/10/2021
 
 ## Author

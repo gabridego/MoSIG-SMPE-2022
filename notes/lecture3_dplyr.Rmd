@@ -1,0 +1,125 @@
+---
+title: "Lecture 3: intro to R and dplyr"
+author: "Gabriele Degola"
+date: "October, 2021"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Introduction to R
+
+Load and explore data:
+
+```{r}
+mtcars
+```
+
+```{r}
+str(mtcars)
+```
+
+Columns of the dataframe can be selected and manipulated easily:
+
+```{r}
+mtcars$drat
+```
+
+```{r}
+mtcars$drat + 1
+```
+
+```{r}
+mtcars$drat > 3.5
+```
+
+Filter observations according to the value of a feature (mind the comma at the end):
+
+```{r}
+mtcars[mtcars$drat > 3.5,]
+```
+
+```{r}
+mtcars[mtcars$drat > 3.5 & mtcars$cyl == 6,]
+```
+
+```{r}
+mtcars[mtcars$drat > 3.5,]$carb
+```
+
+Compute feature statistics:
+
+```{r}
+mean(mtcars$mpg); sd(mtcars$mpg)
+```
+
+## dplyr
+
+```{r, warning=FALSE, message=FALSE}
+library(dplyr)
+```
+
+Use `summarise` to create a new dataframe summarising some variables:
+
+```{r}
+mtcars %>% summarise(mpg_mean = mean(mpg), mpg_sd = sd(mpg))
+```
+
+Use `group_by` to create different group according to the values of one or more variables:
+
+```{r}
+mtcars %>% group_by(cyl) %>% summarise(mpg_mean = mean(mpg), mpg_sd = sd(mpg))
+```
+
+```{r, message=FALSE}
+mtcars %>% group_by(cyl, am) %>% summarise(mpg_mean = mean(mpg), mpg_sd = sd(mpg))
+```
+
+```{r, message=FALSE}
+mtcars %>% group_by(cyl, carb) %>% summarise(mpg_mean = mean(mpg), mpg_sd = sd(mpg))
+```
+
+Some standard deviation values are `NaN`. Why? Because there is a single observation having certains values for `cyl` and `carb` (for example, 6 and 6).
+
+```{r, message=FALSE}
+mtcars %>% group_by(cyl, carb) %>% summarise(mpg_mean = mean(mpg), mpg_sd = sd(mpg), num = n())
+```
+
+Note that `n` is a special function to be used in a data context. `nrow` returns the number of observations in a dataframe.
+
+```{r}
+nrow(mtcars)
+```
+
+`ungroup` is used to remove grouping and perform other operations on the whole dataframe. By itself, it does not do anything:
+
+```{r, message=FALSE}
+mtcars %>% group_by(cyl, carb) %>% summarise(mpg_mean = mean(mpg), mpg_sd = sd(mpg), num = n()) %>% ungroup()
+```
+
+`mutate` adds new features, while preserving existing ones:
+
+```{r, message=FALSE}
+mtcars %>% group_by(cyl, carb) %>% summarise(mpg_mean = mean(mpg), mpg_sd = sd(mpg), num = n()) %>% ungroup() %>% mutate(mpg_gmean = mean(mpg_mean))
+```
+
+```{r, message=FALSE}
+mtcars %>% group_by(cyl, carb) %>% summarise(mpg_mean = mean(mpg), mpg_sd = sd(mpg), num = n()) %>% ungroup() %>% mutate(mpg_gmean = mean(mpg_mean), deviation = mpg_mean - mpg_gmean)
+```
+
+
+## Plotting in R
+
+```{r}
+cars
+```
+
+```{r}
+plot(cars)
+```
+
+```{r}
+plot(cars$speed, cars$dist)
+```

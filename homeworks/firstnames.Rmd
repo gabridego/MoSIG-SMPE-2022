@@ -194,6 +194,54 @@ ggplot(freq_in_dpt[freq_in_dpt$sexe == 2,], aes(x=fct_rev(dpt), y=freq, color=pr
 
 This gives a different perspective. For example, one could have been lead to think that, as around 150000 children has been named Jean, almost all the males in department 75 are named Jean. Instead, this only corresponds to the 5% of all newborns in department 75 (Paris), an highly populated region. At the same time, one female over three is actually named Marie in 974 (La Réunion). Finally, it is worth noticing that in 971, 972 and 973 (*départements d'outre mer*), the most used firstnames are the renowned rare names, that may be considered as rare in metropolitan France while being common in Central America.
 
+### Test of map visualization
+
+```{r results=FALSE, message=FALSE}
+# Create French map object
+map <- subset(map_data("france"), select = -subregion)
+map <- map %>% mutate(region = tolower(region))
+# Load CSV matching department codes with names
+file = "data/departements-region.csv"
+if(!file.exists(file)){
+  download.file("https://www.data.gouv.fr/en/datasets/r/987227fb-dcb2-429e-96af-8979f97c9c84",
+	destfile=file)
+}
+# Standardize department names as in the map
+deps <- subset(read.csv(file, encoding = "UTF-8", stringsAsFactors = FALSE), select = -region_name)
+deps <- deps %>% mutate(dep_name = tolower(dep_name)) %>% mutate(dep_name = gsub("[áàâ]", "a", dep_name))
+deps <- deps %>% mutate(dep_name = gsub("[éèê]", "e", dep_name)) %>% mutate(dep_name = gsub("[íìî]", "i", dep_name))
+deps <- deps %>% mutate(dep_name = gsub("[óòô]", "o", dep_name)) %>% mutate(dep_name = gsub("'", "", dep_name))
+# Rename columns
+deps <- rename(deps, region = dep_name)
+deps <- rename(deps, dpt = num_dep)
+deps$region[deps$region == "corse-du-sud"] <- "corse du sud"
+# Join for department code
+map <- left_join(x = map, y = deps)
+# Merge Corse
+map$dpt[map$dpt == "2A"] <- 20
+map$dpt[map$dpt == "2B"] <- 20
+# Put together map and name frequencies
+freq_in_dpt_male <- freq_in_dpt[freq_in_dpt$sexe == 1,]
+freq_in_dpt_female <- freq_in_dpt[freq_in_dpt$sexe == 2,]
+map_male <- left_join(x = map, y = freq_in_dpt_male)
+map_female <- left_join(x = map, y = freq_in_dpt_female)
+```
+```{r echo=FALSE, results=FALSE, message=FALSE, fig.show="hold", out.width="50%"}
+# https://colinfay.me/mapping-the-french-second-round-results-with-r/
+ggplot(map_male, aes(long, lat)) +
+  geom_polygon(aes(group = group, fill = preusuel)) +
+  borders("france") +
+  coord_map() +
+  labs(x = "", y = "", title = "Most frequent male name per department") +
+  theme(axis.text.x = element_blank(), axis.text.y = element_blank(), legend.position = "top")
+
+ggplot(map_female, aes(long, lat)) +
+  geom_polygon(aes(group = group, fill = preusuel)) +
+  borders("france") +
+  coord_map() +
+  labs(x = "", y = "", title = "Most frequent female name per department") +
+  theme(axis.text.x = element_blank(), axis.text.y = element_blank(), legend.position = "top")
+```
 
 ## Conclusion
 

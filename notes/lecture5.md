@@ -17,8 +17,3 @@
 
 ## Considerations on performance measurement
 - Several metrics used in different fields, not always directly measurable. Different requirements, not always satisfied.
-
-## For next time
-- Review ggplot
-- work with project
-- do fishbone diagram

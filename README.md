@@ -1,6 +1,6 @@
 # MoSIG-SMPE-2022
 
-This repository contains notes and homework for the Scientific Methodology and Experimental Evaluation course,
+This repository contains notes and homework for the *Scientific Methodology and Experimental Evaluation* course,
 for the year 2021/22.
 
 ## Homeworks
@@ -19,6 +19,8 @@ for the year 2021/22.
 	- [Intro to R and dplyr](notes/lecture3_dplyr.html)
 - [Lecture 4](notes/lecture4.md) - 28/10/2021
 - [Lecture 5](notes/lecture5.md) - 18/11/2021
+- [Lecture 6](notes/lecture6.md) - 25/11/2021
+	- [Central limit theorem](notes/lecture6_clt.pdf)
 
 ## Author
 

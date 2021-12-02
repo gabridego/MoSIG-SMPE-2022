@@ -1,0 +1,105 @@
+---
+title: 'TP: Linear regression on trees'
+author: "Gabriele Degola"
+date: "02/12/2021"
+output:
+  html_document:
+    df_print: paged
+  pdf_document:
+    includes:
+      in_header: "../utils/wrap-code.tex"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r, message=FALSE, warning=FALSE}
+library(tidyverse)
+```
+
+
+```{r}
+myData <- read.table(file="../data/arbres-tot.csv", sep=';', skip=3, header=TRUE)
+myData <- myData[myData$X10 != 0,]
+```
+
+## Linear regression
+```{r}
+circ <- myData$X70
+height <- myData$X10
+
+ggplot(myData, aes(x=circ, y=height)) + geom_point() + xlab("circ") + ylab("height")
+```
+
+```{r}
+simple_reg <- lm(height ~ circ, data=myData)
+names(simple_reg)
+```
+
+```{r}
+anova(simple_reg)
+```
+
+```{r}
+summary(simple_reg)
+```
+
+```{r, message=FALSE}
+ggplot(myData, aes(x=circ, y=height)) + geom_point() +
+  stat_smooth(method='lm', se=FALSE) + xlab("circ") + ylab("height")
+```
+
+### Hypothesis checking
+
+**Residual independence**:
+```{r}
+acf(residuals(simple_reg))
+```
+
+**Residual normality**:
+```{r}
+plot(simple_reg, 2)
+```
+
+**Residuals homogeinity**:
+```{r}
+plot(simple_reg$residuals)
+plot(simple_reg, 3)
+plot(simple_reg, 1)
+```
+
+Check for **outliers** through Cook's distance:
+```{r}
+plot(simple_reg, 4)
+```
+
+### Prediction
+```{r}
+predict(simple_reg, data.frame(circ=10), interval="prediction")
+```
+
+## Multivariate regression
+```{r}
+circ_sqrt <- sqrt(myData$X70)
+
+multi_regr <- lm(height ~ circ + circ_sqrt, data=myData)
+summary(multi_regr)
+```
+
+```{r}
+multi_reg_2 <- lm(height ~ circ_sqrt, data=myData)
+summary(multi_reg_2)
+```
+
+```{r, message=FALSE}
+circ_pred <- seq(0, 175, len=1000)
+height_pred <- multi_reg_2$coefficients[1] + multi_reg_2$coefficients[2]*sqrt(circ_pred)
+fct_reg <- data.frame(circ_pred=circ_pred, height_pred=height_pred)
+
+ggplot() + geom_point(data=myData, aes(x=circ, y=height)) +
+  geom_line(data=fct_reg, aes(x=circ_pred, y=height_pred), col="blue") +
+  stat_smooth(method="lm", se=FALSE) + xlab("circ") + ylab("height")
+```
+
+However, results are not really satisfactory. More explanatory variables should therefore included in the model.

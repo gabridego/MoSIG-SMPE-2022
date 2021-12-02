@@ -31,17 +31,17 @@ You need to use the _tidyverse_ for this analysis. Unzip the file _dpt2020_txt.z
 
 ## Download Raw Data from the website
 ```{r, warning=FALSE}
-file = "data/dpt2020_txt.zip"
+file = "../data/dpt2020_txt.zip"
 if(!file.exists(file)){
   download.file("https://www.insee.fr/fr/statistiques/fichier/2540004/dpt2020_csv.zip",
 	destfile=file)
 }
-unzip(file)
+unzip(file, exdir='../data')
 ```
 
 ## Build the Dataframe from file
 ```{r}
-FirstNames <- read_delim("data/dpt2020.csv",delim =";")
+FirstNames <- read_delim("../data/dpt2020.csv",delim =";")
 ```
 ```{r}
 FirstNames
@@ -201,7 +201,7 @@ This gives a different perspective. For example, one could have been lead to thi
 map <- subset(map_data("france"), select = -subregion)
 map <- map %>% mutate(region = tolower(region))
 # Load CSV matching department codes with names
-file = "data/departements-region.csv"
+file = "../data/departements-region.csv"
 if(!file.exists(file)){
   download.file("https://www.data.gouv.fr/en/datasets/r/987227fb-dcb2-429e-96af-8979f97c9c84",
 	destfile=file)

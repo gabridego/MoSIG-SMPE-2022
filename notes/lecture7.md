@@ -20,3 +20,6 @@ summarised. In this case analysis must be carried out looking for shapes in the 
 Significance of parameters must then be tested, to verify that they contribute to the model.
 
 p-value: how likely it is that null hypothesis is verified.
+
+Many explicative variable can be present in the data -> multivariate linear regression. The more explicative variable, the more the model will explain, but this will not
+increase the quality (overfitting). Tradeoff between R^2 and number of explanatory variables. Fisher's test tells if model is good, but several tests have been developed.

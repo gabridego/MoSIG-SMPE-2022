@@ -10,7 +10,7 @@ for the year 2021/22.
 - First name analysis: [source](homeworks/firstnames.Rmd)/[PDF](homeworks/firstnames.pdf)
 - [R manipulation](homeworks/r_manipulation.pdf) of data from PDF
 - [Forked repository](https://github.com/gabridego/M2R-ParallelQuicksort) for parallel quicksort
-- MOOC peer-evaluated exercise: [notebook](https://app-learninglab.inria.fr/moocrr/gitlab/9a2196f412490e364d01db02df46721d/mooc-rr/blob/master/module3/exo3/Around%20Simpson's%20Paradox.ipynb)
+- MOOC peer-evaluated exercise: [notebook](https://app-learninglab.inria.fr/moocrr/gitlab/9a2196f412490e364d01db02df46721d/mooc-rr/blob/master/module3/exo3/Around%20Simpson's%20Paradox.ipynb)/[PDF](homeworks/peer_evaluated.pdf)
 
 ## Notes
 

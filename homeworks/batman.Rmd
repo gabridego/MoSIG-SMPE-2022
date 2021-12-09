@@ -1,0 +1,131 @@
+---
+title: 'TP: is Batman somewhere?'
+author: "Gabriele Degola"
+date: "December 2021"
+output:
+  pdf_document:
+    includes:
+      in_header: "../utils/wrap-code.tex"
+  html_document:
+    df_print: paged
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r, message=FALSE, warning=FALSE}
+library(tidyverse)
+library(corrplot)
+```
+
+```{r}
+myData <- read.table(file="../data/bats.csv", sep=";", skip=3, header=TRUE)
+names(myData)
+```
+
+## Study of the relationship between brain weight and body mass
+
+```{r message=FALSE, out.width="80%", fig.align = "center"}
+phyto <- myData[(myData$Diet == 1),]
+ggplot(phyto, aes(x=BOW, y=BRW)) + geom_point() +
+  xlab("Body mass (g)") + ylab("Brain weight (µg)") +
+  ggtitle("Brain weight with respect to body mass in phytophagous") +
+  theme(plot.title = element_text(size=12))
+```
+
+It looks like body mass (in grams) has a clear influence on brain weight (in micrograms). This relation can be analysed fitting a linear model of brain weight as a function of body mass. The fitted line is also shown in next plot.
+
+```{r message=FALSE, out.width="80%", fig.align = "center"}
+reg1 <- lm(BRW ~ BOW, data=phyto)
+ggplot(phyto, aes(x=BOW, y=BRW)) + geom_point() + geom_smooth(method="lm") +
+  xlab("Body mass (g)") + ylab("Brain weight (µg)") +
+  ggtitle("Brain weight with respect to body mass in phytophagous (with regression line)") +
+  theme(plot.title = element_text(size=12))
+```
+
+With this expression, R estimates the $\beta$ coefficients of the formula $Y = \beta_1 + \beta_2X + \epsilon$, where $X$ is the vector containing the values of the measured body masses and $Y$ contains the measured brain weights. $\epsilon$ is random noise.
+
+```{r}
+summary(reg1)
+```
+
+In this case, a few results can be observed:
+- The intercept $\beta_1$ is estimated as 623.45.
+- The p-value for the employed test statistics is extremely small, lower than 2.2e-16.
+- The null hypothesis of this test is $H_0 : \beta_1 = \beta_2 = 0$. This hypothesis is therefore rejected.
+- Body mass has a significative relation with brain weight. The intercept is also important.
+- The coefficient of determination $R^2$ of the fitted model is 0.95, so a big portion of the global variation is explained by the model.
+
+Next, analysis of variance can be performed.
+
+```{r}
+anova(reg1)
+```
+
+This confirms that body weight is highly significative. In addition, the previous table contains information about the model residual, with the sum of residual squares being 4253838. The residuals have been computed during model fitting and can be plotted against the predicted values.
+
+```{r out.width="80%", fig.align = "center"}
+tmp <- data.frame(reg1$fitted.values, reg1$residuals)
+ggplot(tmp, aes(x=reg1.fitted.values, y=reg1.residuals)) + geom_point() +
+  xlab("Predicted") + ylab("Residuals") + ggtitle("Diagnostic graph") +
+  theme(plot.title = element_text(size=12))
+```
+
+Clearly, something is not going well: most prediction values are below 3750 µg, except one with predicted brain weight around 10000 µg. As this last point is so far from the others, it influences the model results worsening the prediction for values in the middle. For now, we can consider it as an outlier.
+
+Cook's distance can be used for outlier detection in the fitted model:
+
+```{r out.width="80%", fig.align = "center"}
+plot(reg1, 4)
+```
+
+Observation number 7 has distance much higher than the higher and probably corresponds to the previously identified point.
+
+```{r}
+myData[7,]
+```
+
+Indeed, `r myData[7,]$Species` has body mass `r myData[7,]$BOW` g and brain weight `r myData[7,]$BRW` µg.
+
+We can therefore redo the previous analysis without taking it into account.
+```{r message=FALSE, out.width="80%", fig.align = "center"}
+phytobis <- phyto[which(phyto$BRW<8000),]
+reg2 <- lm(BRW ~ BOW, data=phytobis)
+ggplot(phytobis, aes(x=BOW, y=BRW)) + geom_point() + geom_smooth(method="lm") +
+  xlab("Body mass (g)") + ylab("Brain weight (µg)") +
+  ggtitle("Brain weight with respect to body mass in phytophagous (with regression line)") +
+  theme(plot.title = element_text(size=12))
+summary(reg2)
+```
+
+Clearly, now the regression line better fits intermediate point and is not affected by the removed extreme observation. The predicted coefficient for the body weight predictor is higher than before, as well as the coefficient of determination.
+
+A few graphs can therefore plotted for model diagnosis, including the residuals agains predicted shown before. For the first model, including the "outlier":
+
+```{r fig.height=7}
+par(mfcol=c(2,2))
+plot(reg1)
+```
+If the "outlier" is removed:
+```{r fig.height=7}
+par(mfcol=c(2,2))
+plot(reg2)
+```
+Important differences can be noticed:
+- The plots related to residuals vs fitted and scale-location are more "flat" for the second model, so it provides more accurate predictions than the first one.
+- According to the Q-Q plot, it is more probable that the data used to fit the second model are drawn from a normal distribution, with respect to the first model.
+
+Therefore, the second model better satisfies common assumptions of linear regression.
+
+
+## Study of the contribution to the total weight of each part of the brain
+
+Preivous analysis can be expanded, using other variables (related to brain parts) to explain brain weight. The possible explanatory variables are AUD (auditory nuclei volume)
+
+```{r out.width="80%", fig.align = "center"}
+phytoNum <- phyto[, c(4:8)]
+mat.cor <- cor(phytoNum)
+corrplot(mat.cor, type="upper")
+```
+

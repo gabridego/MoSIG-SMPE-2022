@@ -1,0 +1,77 @@
+---
+title: "TP: Anova analysis on wheat"
+author: "Gabriele Degola"
+date: "9/12/2021"
+output:
+  html_document:
+    df_print: paged
+  pdf_document:
+    includes:
+      in_header: "../utils/wrap-code.tex"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r, message=FALSE, warning=FALSE}
+library(tidyverse)
+```
+
+## Import the data
+
+```{r}
+ble <- read.table("../data/ble.txt", header=TRUE, sep=";", dec=".")
+head(ble)
+```
+
+## Perform a 1-factor ANOVA
+
+```{r fig.show="hold", out.width="50%"}
+ggplot(ble, aes(x=variete, y=rdt)) + geom_boxplot() +
+  ggtitle("Whisker boxes") + xlab("Wheat variety") + ylab("Yield")
+
+ggplot(ble, aes(x=phyto, y=rdt)) + geom_boxplot() +
+  ggtitle("Boxplot") + xlab("Phytosanitary treatment") + ylab("Yield")
+```
+
+### Anova test on wheat variety
+
+```{r}
+anova_variete <- lm(rdt ~ variete, data=ble)
+summary(anova_variete)
+```
+
+p-value is very small, there is an actual influence of the wheat variety on the produced yield. We thereofre reject the null hypothesis that variety has no impact of yield. p-values of each variety are with respect of the first modality. Indeed, there is no significative difference in yield between variety 1 and 2, while 3 and 4 behave differently from variety 1.
+
+```{r}
+anova(anova_variete)
+```
+
+### Anova test on pesticide
+
+```{r}
+anova_phyto <- lm(rdt ~ phyto, data=ble)
+summary(anova_phyto)
+```
+
+Big p-value, we do not reject the hypothesis that use of pesticide have no influence on the produced yield. No significative difference between the yield produced with or without pesticides.
+
+```{r}
+anova(anova_phyto)
+```
+
+Tests are also significative (good results) as data are balanced (20 entries for each variety, half with and half without pesticides).
+
+## Perform a 2-factor ANOVA
+
+```{r}
+anova_variete_phyto <- lm(rdt ~ variete * phyto, data=ble)
+summary(anova_variete_phyto)
+```
+
+```{r}
+anova(anova_variete_phyto)
+```
+
+Big p-values for `phyto` and `variete:pytho`: use of pesticide do not have any impact on yield, as well as the interaction between use of pesticides and variety.

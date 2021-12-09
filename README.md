@@ -11,6 +11,7 @@ for the year 2021/22.
 - [R manipulation](homeworks/r_manipulation.pdf) of data from PDF
 - [Forked repository](https://github.com/gabridego/M2R-ParallelQuicksort) for parallel quicksort
 - MOOC peer-evaluated exercise: [notebook](https://app-learninglab.inria.fr/moocrr/gitlab/9a2196f412490e364d01db02df46721d/mooc-rr/blob/master/module3/exo3/Around%20Simpson's%20Paradox.ipynb)/[PDF](homeworks/peer_evaluated.pdf)
+- Multiple linear regression hand-on (Batman): [source](homeworks/batman.Rmd)/[PDF](homeworks/batman.pdf)
 
 ## Notes
 
@@ -24,6 +25,8 @@ for the year 2021/22.
 	- [Central limit theorem](notes/lecture6_clt.pdf)
 - [Lecture 7](notes/lecture7.md) - 02/12/2021
 	- [Linear regression on trees](notes/lecture7_linregr.html)
+- [Lecture 8](notes/lecture8.md) - 09/12/2021
+	- [Anova analysis on wheat](notes/lecture8_anova.html)
 
 ## Author
 

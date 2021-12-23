@@ -151,8 +151,28 @@ The estimated model predicts the $\beta$ coefficient of the regression model $Y 
 
 The coefficient associated to the three variables are, respectively, 47.989, -2.444 and 15.981. The coefficient related to MOB is not significative, showing a high p-value, and could therefore be removed from the analysis.
 
+Additional analysis can be conducted on this model. Here, the "batman" is taken into account.
+
 ```{r}
 reg0 <- lm(BRW ~ 1, data=phyto)
 step(reg0, scope=BRW ~ AUD + MOB + HIP, direction="forward")
 ```
 
+According to the `help`, `step` performs a stepwise search for a best model according to the AIC criterion. In this case, intercept only is considered at the first step and all explanatory variables are included at the end. In sequence, the models `BRW ~ 1`, `BRW ~ HIP`, `BRW ~ HIP + MOB` and `BRW ~ HIP + MOB + AUD` are evaluated, with the latter having the lowest information loss.
+
+## Link between volume of the auditory part and diet
+
+```{r fig.show="hold", out.width="50%"}
+myData$Diet_F <- as.factor(myData$Diet)
+with(myData, plot(AUD~Diet))
+with(myData, plot(AUD~Diet_F))
+```
+
+The two graphs basically show the same information, but in different ways. The first displays the single data points and it is clear that few examples are available for diets 2 and 4. The second displays the boxplots instead and shows data distributions for each different diet. Boxplots for diets 2 and 4 are condensed around the mean, while the ones with more data points are more spread.
+
+```{r}
+lm <- lm(AUD~Diet_F, data=myData)
+anova(lm)
+```
+
+The p-value of the ANOVA test is quite high, 0.432, so it is not possible to conlude that there is a significant difference between the different diets. The bats' diets don't have therefore an impact on the volume of their auditory part of the brain.

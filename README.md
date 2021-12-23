@@ -27,6 +27,9 @@ for the year 2021/22.
 	- [Linear regression on trees](notes/lecture7_linregr.html)
 - [Lecture 8](notes/lecture8.md) - 09/12/2021
 	- [Anova analysis on wheat](notes/lecture8_anova.html)
+- Lecture 9 - 17/12/2021
+	- [Bayesian statistics](https://gitlab.inria.fr/alegrand/slides_bayesian_sampling/-/blob/master/bayesian_statistics_introduction.pdf)
+	- [Design of experiments](https://github.com/alegrand/SMPE/blob/master/lectures/5_design_of_experiments.pdf)
 
 ## Author
 

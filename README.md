@@ -12,8 +12,8 @@ for the year 2021/22.
 - [Forked repository](https://github.com/gabridego/M2R-ParallelQuicksort) for parallel quicksort
 - MOOC peer-evaluated exercise: [notebook](https://app-learninglab.inria.fr/moocrr/gitlab/9a2196f412490e364d01db02df46721d/mooc-rr/blob/master/module3/exo3/Around%20Simpson's%20Paradox.ipynb)/[PDF](homeworks/peer_evaluated.pdf)
 - Multiple linear regression hand-on (Batman): [source](homeworks/batman.Rmd)/[PDF](homeworks/batman.pdf)
-- [Design of experiments](homeworks/)
-- Ethics (contact tracing): [resume](homeworks/contact_tracing.pdf), [slides](homeworks/)
+- Design of experiments: [source](homeworks/design_of_experiments/doe.Rmd)/[PDF](homeworks/design_of_experiments/doe.pdf)
+- Ethics (contact tracing): [resume](homeworks/contact_tracing.pdf), [slides](homeworks/contact_tracing_slides.pdf)
 
 ## Notes
 

@@ -1,0 +1,135 @@
+---
+title: "Design of experiments"
+author: "Gabriele Degola"
+date: "January 2022"
+output:
+  pdf_document:
+    includes:
+      in_header: "../../utils/wrap-code.tex"
+  html_document:
+    df_print: paged
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+My page on the *shinyapp*: https://adaphetnodes.shinyapps.io/design_of_experiments/?user_d3318
+
+```{r message=FALSE, warning=FALSE}
+library(FrF2)
+library(DoE.wrapper)
+library(tidyverse)
+library(GGally)
+
+seed <- 42
+set.seed(seed)
+```
+
+## Experimental design
+
+As a first attempt, let's test a Plackett-Burman design on the 11 variables, that can take values between 0 and 1.100 runs are made.
+
+```{r}
+pb <- pb(nruns=100, nfactors=11, n12.taguchi=FALSE, factor.names=list(x1=c(0,1), x2=c(0,1), x3=c(0,1), x4=c(0,1), x5=c(0,1), x6=c(0,1), x7=c(0,1), x8=c(0,1), x9=c(0,1), x10=c(0,1), x11=c(0,1)), seed=seed)
+print(sum(is.na(pb)))
+write.table(x=pb, file="pb.csv", sep=",", row.names=FALSE, col.names=FALSE, quote=FALSE)
+```
+
+Let's analyse the results produced on the website.
+
+```{r}
+pb_res <- read.csv(file="pb_res.csv") %>% select(-Date)
+pb_res[pb_res[, "y"] < 0.1 & pb_res[, "y"] > -0.1, ]
+```
+
+Some aspects of interest can be noticed when the response is 0 up to a noise. In particular, in the corresponding experiments the variables `x1`, `x4`, `x7` and `x9` always have the same values (0, 1, 0 and 1 respectively), while different values of the others do not considerably alter the results.
+
+```{r}
+head(pb_res %>% arrange(desc(y)))
+head(pb_res %>% arrange(y))
+```
+
+It can be noticed that, apparently, highest results are obtained with `x1`=0, `x4`=1 and `x9`=0. Trend is confirmed for the lowest results. `x7` appears to contribute less than the others, with no clear emerging pattern. However, we do not know anything about the underlying structure, so it would be wrong to assume linear contribution for the variables.
+
+For next experiments, variables `x1`, `x4`, `x7` and `x9` are only taken into consideration. Let's try a *Latin Hyper Square* design on them.
+
+```{r out.width="70%", fig.align = "center"}
+lhs <- lhs.design(type="maximin", nruns=100, nfactors=11, seed=seed, factor.names=list(x1=c(0,1), x2=c(0,0), x3=c(0,0), x4=c(0,1), x5=c(0,0), x6=c(0,0), x7=c(0,1), x8=c(0,0), x9=c(0,1), x10=c(0,0), x11=c(0,0)))
+lhs[is.na(lhs)] <- 0
+
+ggpairs(lhs, columns=c("x1","x4","x7","x9"))
+
+write.table(x=lhs, file="lhs.csv", sep=",", row.names=FALSE, col.names=FALSE, quote=FALSE)
+```
+
+Let's analyse the results produced on the website.
+
+```{r}
+lhs_res <- read.csv(file="lhs_res.csv") %>% select(-Date)
+head(lhs_res %>% arrange(desc(y)))
+head(lhs_res %>% arrange(y))
+```
+
+## Regression models
+
+With the results obtained so far, it is possible to fit regression model, in order to try to guess the underlying law. Let's start with a linear regression.
+
+```{r}
+lin_reg1 <- lm(y ~ x1 + x4 + x7 + x9, data=lhs_res)
+summary(lin_reg1)
+```
+
+According to the fitted model, variable `x7` is not significant for predicting the response. Let's use two models in parallel, one including and one excluding it.
+
+```{r}
+lin_reg2 <- lm(y ~ x1 + x4 + x9, data=lhs_res)
+summary(lin_reg2)
+```
+
+Now, let's generate a random example, feed it on the website and try to predict the response.
+
+```{r}
+test <- data.frame(matrix(0, ncol=11, nrow=2))
+colnames(test) <- colnames(lhs)
+test[1, c("x1","x4","x7","x9")] <- runif(4)
+test[2, c("x1","x4","x7","x9")] <- runif(4)
+test
+```
+
+```{r}
+write.table(test, file="", sep=",", row.names=FALSE, col.names=FALSE, quote=FALSE)
+```
+
+On the website, responses are $\sim$ 1.49 and 1.14 respectively.
+
+```{r}
+predict.lm(lin_reg1, test)
+predict.lm(lin_reg2, test)
+```
+
+Mh, results are very poor.
+
+Let's try to generalize fitting a quadratic regression model.
+
+```{r}
+quad_reg1 <- lm(y ~ poly(x1,2) + poly(x4,2) + poly(x7,2) + poly(x9,2), data=lhs_res)
+summary(quad_reg1)
+quad_reg2 <- lm(y ~ poly(x1,2) + poly(x4,2) + poly(x9,2), data=lhs_res)
+summary(quad_reg2)
+```
+
+Results are interesting here! Apparently, `x1`$^2$ plays a significant role and, when it is considered, `x7` is significant too. Resulting $R^2$ score is also higher than before.
+
+```{r}
+quad_reg3 <- lm(y ~ poly(x1,2) + x4 + x7+ x9, data=lhs_res)
+summary(quad_reg3)
+```
+
+```{r}
+predict.lm(quad_reg1, test)
+predict.lm(quad_reg2, test)
+predict.lm(quad_reg3, test)
+```
+
+Something is still missing...

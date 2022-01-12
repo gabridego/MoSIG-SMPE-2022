@@ -12,6 +12,8 @@ for the year 2021/22.
 - [Forked repository](https://github.com/gabridego/M2R-ParallelQuicksort) for parallel quicksort
 - MOOC peer-evaluated exercise: [notebook](https://app-learninglab.inria.fr/moocrr/gitlab/9a2196f412490e364d01db02df46721d/mooc-rr/blob/master/module3/exo3/Around%20Simpson's%20Paradox.ipynb)/[PDF](homeworks/peer_evaluated.pdf)
 - Multiple linear regression hand-on (Batman): [source](homeworks/batman.Rmd)/[PDF](homeworks/batman.pdf)
+- [Design of experiments](homeworks/)
+- Ethics (contact tracing): [resume](homeworks/contact_tracing.pdf), [slides](homeworks/)
 
 ## Notes
 
@@ -30,6 +32,10 @@ for the year 2021/22.
 - Lecture 9 - 17/12/2021
 	- [Bayesian statistics](https://gitlab.inria.fr/alegrand/slides_bayesian_sampling/-/blob/master/bayesian_statistics_introduction.pdf)
 	- [Design of experiments](https://github.com/alegrand/SMPE/blob/master/lectures/5_design_of_experiments.pdf)
+- Lecture 10 - 06/01/2022
+	- [Online optimization and bandits problems](https://github.com/alegrand/SMPE/blob/master/sessions/2020_10_Grenoble/bandits.pdf)
+	- [Gaussian Process Surrogate models](https://hal.archives-ouvertes.fr/cel-01618068/document)
+		- [Demo](https://durrande.shinyapps.io/gp_playground/)
 
 ## Author
 

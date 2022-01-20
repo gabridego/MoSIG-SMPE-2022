@@ -36,6 +36,8 @@ for the year 2021/22.
 	- [Online optimization and bandits problems](https://github.com/alegrand/SMPE/blob/master/sessions/2020_10_Grenoble/bandits.pdf)
 	- [Gaussian Process Surrogate models](https://hal.archives-ouvertes.fr/cel-01618068/document)
 		- [Demo](https://durrande.shinyapps.io/gp_playground/)
+- [Lecture 11](notes/lecture11.md) - 13/01/2022
+- [Lecture 12](notes/lecture12.md) - 13/01/2022
 
 ## Author
 

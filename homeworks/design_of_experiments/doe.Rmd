@@ -133,3 +133,23 @@ predict.lm(quad_reg3, test)
 ```
 
 Something is still missing...
+
+Let's increase the polynomial degrees.
+
+```{r}
+cub_reg1 <- lm(y ~ poly(x1,3) + poly(x4,3) + poly(x7,3) + poly(x9,3), data=lhs_res)
+summary(cub_reg1)
+cub_reg2 <- lm(y ~ poly(x1,3) + poly(x4,3) + poly(x9,3), data=lhs_res)
+summary(cub_reg2)
+```
+
+```{r}
+cub_reg3 <- lm(y ~ poly(x1,3) + x4 + x7+ x9, data=lhs_res)
+summary(cub_reg3)
+```
+
+```{r}
+predict.lm(cub_reg1, test)
+predict.lm(cub_reg2, test)
+predict.lm(cub_reg3, test)
+```

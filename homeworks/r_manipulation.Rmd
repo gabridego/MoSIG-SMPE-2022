@@ -72,7 +72,6 @@ for (i in 1:length(groups)) {
   print(moyenne)
   print(grande)
   # Convert to dataframe
-  # TODO
   # data <- rbind(data, setNames(data.frame(petite), names(data)))
   # data <- rbind(data, setNames(data.frame(moyenne), names(data)), setNames(data.frame(moyenne), names(data))
 }
